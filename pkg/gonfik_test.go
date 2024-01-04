@@ -1,11 +1,9 @@
-package loader
+package pkg
 
 import (
 	"fmt"
 	"os"
 	"testing"
-
-	"github.com/yigithanbalci/gonfik/pkg/loader"
 )
 
 // TestSimpleConfig calls blah blah
@@ -17,5 +15,5 @@ func TestSimpleConfig(t *testing.T) {
 	}
 	want := "config"
 	konfik := loader.GlobalConfig()
-
+	loader.GlobalConfig()
 }
