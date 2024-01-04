@@ -88,7 +88,7 @@ func getConfigDir() string {
 
 func getFileName() string {
 	isProd := getConfigFromEnv("GONFIK_IS_PROD")
-	if isProd == "true" {
+	if isProd == "true" || isProd == "" {
 		fileName := getConfigFromEnv("GONFIK_PROD_FILE")
 		if fileName != "" {
 			return fileName
