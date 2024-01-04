@@ -59,7 +59,7 @@ func loadConfig(fileName string) (*Gonfik, error) {
 	return konfik, nil
 }
 
-func (c Gonfik) Config(keyPath string) (string, bool) {
+func (c *Gonfik) Config(keyPath string) (string, bool) {
 	keys := strings.Split(keyPath, ".")
 	currentObj := konfik.config
 	configVal := ""
