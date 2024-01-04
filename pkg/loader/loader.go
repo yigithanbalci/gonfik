@@ -19,7 +19,7 @@ type Gonfik struct {
 	fileName string
 }
 
-var Konfik *Gonfik
+var konfik *Gonfik
 
 func NewConfig() (*Gonfik, error) {
 	return NewConfig2(getFileName())
@@ -35,14 +35,14 @@ func NewConfig3(configDir string, fileName string) (*Gonfik, error) {
 }
 
 func GlobalConfig() (*Gonfik, error) {
-	if Konfik == nil {
+	if konfik == nil {
 		config, err := NewConfig()
 		if err == nil {
 			return nil, err
 		}
-		Konfik = config
+		konfik = config
 	}
-	return Konfik, nil
+	return konfik, nil
 }
 
 func loadConfig(fileName string) (*Gonfik, error) {
@@ -55,13 +55,13 @@ func loadConfig(fileName string) (*Gonfik, error) {
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Error reading Json File: %s", err))
 	}
-	json.Unmarshal(byteValue, &Konfik)
-	return Konfik, nil
+	json.Unmarshal(byteValue, &konfik)
+	return konfik, nil
 }
 
-func Config(keyPath string) (string, bool) {
+func (c Gonfik) Config(keyPath string) (string, bool) {
 	keys := strings.Split(keyPath, ".")
-	currentObj := Konfik.config
+	currentObj := konfik.config
 	configVal := ""
 	for _, key := range keys {
 		value, ok := currentObj[key]
