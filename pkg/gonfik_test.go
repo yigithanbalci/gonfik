@@ -12,7 +12,7 @@ func TestSimpleConfig(t *testing.T) {
 		t.Fatalf("Error setting environment variable: %v", err)
 		return
 	}
-	err = os.Setenv("GONFIK_PROD_FILE", "gonfik_test.json")
+	err = os.Setenv("GONFIK_DEV_FILE", "gonfik_test.json")
 	if err != nil {
 		t.Fatalf("Error setting environment variable: %v", err)
 		return

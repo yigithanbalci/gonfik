@@ -21,6 +21,13 @@ type Gonfik struct {
 
 var konfik *Gonfik
 
+func init() {
+	_, err := GlobalConfig()
+	if err != nil {
+		fmt.Printf("Configuration is not loaded: %s", err)
+	}
+
+}
 func NewConfig() (*Gonfik, error) {
 	return NewConfig2(getFileName())
 }
@@ -31,13 +38,13 @@ func NewConfig2(fileName string) (*Gonfik, error) {
 
 // this not-letting-overloading is bs.
 func NewConfig3(configDir string, fileName string) (*Gonfik, error) {
-	return loadConfig(configDir + fileName)
+	return loadConfig(filepath.Join(configDir, fileName))
 }
 
 func GlobalConfig() (*Gonfik, error) {
 	if konfik == nil {
 		config, err := NewConfig()
-		if err == nil {
+		if err != nil {
 			return nil, err
 		}
 		konfik = config
@@ -46,7 +53,13 @@ func GlobalConfig() (*Gonfik, error) {
 }
 
 func loadConfig(fileName string) (*Gonfik, error) {
-	jsonFile, err := os.Open(fileName)
+	// Get the current working directory
+	ex, err := os.Getwd()
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("Error getting executable directory: %s", err))
+	}
+	currentDir := filepath.Dir(ex)
+	jsonFile, err := os.Open(filepath.Join(currentDir, fileName))
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Error creating Gonfik: %s", err))
 	}
@@ -55,7 +68,9 @@ func loadConfig(fileName string) (*Gonfik, error) {
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Error reading Json File: %s", err))
 	}
-	json.Unmarshal(byteValue, &konfik)
+	konfik = &Gonfik{make(LoaderConfig),
+		fileName}
+	json.Unmarshal(byteValue, &((*konfik).config))
 	return konfik, nil
 }
 
@@ -79,22 +94,22 @@ func (c *Gonfik) Config(keyPath string) (string, bool) {
 }
 
 func getConfigDir() string {
-	dir := getConfigFromEnv("GONFIK_DIR")
-	if dir == "" {
+	dir, ok := getConfigFromEnv("GONFIK_DIR")
+	if !ok {
 		return "/config"
 	}
 	return dir
 }
 
 func getFileName() string {
-	isProd := getConfigFromEnv("GONFIK_IS_PROD")
-	if isProd == "true" || isProd == "" {
-		fileName := getConfigFromEnv("GONFIK_PROD_FILE")
+	isProd, _ := getConfigFromEnv("GONFIK_IS_PROD")
+	if isProd == "true" {
+		fileName, _ := getConfigFromEnv("GONFIK_PROD_FILE")
 		if fileName != "" {
 			return fileName
 		}
 	} else {
-		fileName := getConfigFromEnv("GONFIK_DEV_FILE")
+		fileName, _ := getConfigFromEnv("GONFIK_DEV_FILE")
 		if fileName != "" {
 			return fileName
 		}
@@ -127,6 +142,6 @@ func loadDotEnv() error {
 	return nil
 }
 
-func getConfigFromEnv(key string) string {
-	return os.Getenv(key)
+func getConfigFromEnv(key string) (string, bool) {
+	return os.LookupEnv(key)
 }
