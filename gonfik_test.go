@@ -1,4 +1,4 @@
-package pkg
+package gonfik
 
 import (
 	"os"
@@ -7,7 +7,7 @@ import (
 
 // TestSimpleConfig calls blah blah
 func TestSimpleConfig(t *testing.T) {
-	err := os.Setenv("GONFIK_DIR", "pkg")
+	err := os.Setenv("GONFIK_DIR", "")
 	if err != nil {
 		t.Fatalf("Error setting environment variable: %v", err)
 		return
